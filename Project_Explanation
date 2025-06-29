@@ -1,0 +1,72 @@
+"""Indian Stock Market Prediction Using LSTM"""
+
+                This project aims to predict stock prices in the
+Indian stock market usinghistorical data and a Long Short-Term Memory (LSTM) model.
+LSTM is a type of Recurrent Neural Network (RNN) that is effective for time series
+forecasting due to its ability to capture long-term dependencies.
+                This project integrates various data preprocessing techniques,
+feature engineering, and a Flask API for making real-time predictions.
+
+1. Data Collection
+      The historical stock prices are fetched using the yfinance library, which provides easy access to
+financial data, including stock prices, trading volumes, and more. In this case, the project pulls
+data for three Indian stocks (RELIANCE.NS, TCS.NS, INFY.NS) from 2010 to 2024.
+
+2. Data Preprocessing
+       Handling Missing Data: Any missing values in the dataset are filled using forward fill
+(fillna(method='ffill')), ensuring no gaps in the time series.
+
+       Technical Indicators:
+         SMA (Simple Moving Averages): 50-day and 200-day moving averages are calculated for the
+RELIANCE.NS stock to capture trends.RSI (Relative Strength Index): An indicator that shows the
+momentum of price changes. It is calculated based on average gains and losses over a 14-day window.
+Bollinger Bands: Used to measure volatility and identify overbought or oversold conditions in the market.
+
+         These indicators help provide more context to the raw stock prices, enabling the model to learn
+from both the price trends and the momentum.
+
+3. Feature Engineering
+         Additional features such as day, month, and day of the week are extracted from the date index.
+These datetime features could capture seasonal patterns in stock prices.
+
+4. Data Preparation for LSTM
+         LSTMs work best with sequential data, so the model is fed with a rolling window of 30 timesteps
+(i.e., the past 30 days of data) to predict the next day's price.
+
+The data is split into input features (SMA_50, SMA_200, RSI) and target values (closing prices).
+
+The data is scaled using MinMaxScaler, which normalizes the values between 0 and 1.
+This is necessary because neural networks work best with scaled data.
+
+5. LSTM Model Architecture
+             The model is composed of two LSTM layers:
+
+LSTM Layers: These layers are responsible for capturing the long-term dependencies in the stock price sequence.
+             Each LSTM layer has 50 units.
+Dropout Layer: This layer is used between the LSTM layers to prevent overfitting by randomly dropping some neurons during training.
+Dense Layer: The final dense layer outputs a single predicted stock price
+
+             The model is compiled using the Adam optimizer and the mean squared error (MSE) loss function.
+The network is trained for 50 epochs, which means it processes the dataset 50 times to adjust its weights.
+
+6. Model Evaluation
+             To evaluate the performance of the model:
+
+RMSE (Root Mean Squared Error): Measures how well the model predicts stock prices; the lower the RMSE, the better.
+MAE (Mean Absolute Error): Average error between predicted and actual values.
+R-squared (R²): Indicates how well the model fits the data (closer to 1 is better).
+
+7. Flask API for Real-Time Prediction
+              The project includes a Flask API to serve the LSTM model, allowing users to input new data
+(technical indicators like SMA_50, SMA_200, and RSI) and receive stock price predictions in real time.
+
+8. Deployment
+             While the model runs in debug mode for development purposes, it is recommended to deploy it with a
+production-grade server like Gunicorn or uWSGI, and behind a reverse proxy such as NGINX.
+
+
+              This project is designed to predict stock prices in the Indian market using a Long Short-Term Memory (LSTM)
+neural network model. It retrieves historical stock data for companies like Reliance, TCS, and Infosys from Yahoo Finance
+and processes it by calculating technical indicators such as moving averages, RSI, and Bollinger Bands. The data is then
+normalized and structured for training the LSTM model. After training, the model's performance is evaluated using metrics
+like RMSE, MAE, and R-squared. Finally, a Flask web application is created to provide real-time stock price predictions via an API
